@@ -2,38 +2,36 @@ package screen
 
 import (
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"log"
-	"os"
+	"src/common"
+	"src/controller"
+	"src/interfaces"
 )
 
 // Config 设计软件配置
 type Config struct {
-	App       fyne.App
+	interfaces.SetWin
 	Win       fyne.Window
 	Container *fyne.Container
 }
 
-var MyApp = &Config{}
+var MyWin = &Config{}
 
 // 屏幕大小
-const indexScreenHight = 500
+const indexScreenHeight = 500
 const indexScreenWeight = 800
 
 func SetIndex() {
-	MyApp.App = app.New()
-	MyApp.Win = MyApp.App.NewWindow("校易综测")
+	MyWin.Win = common.MyApp.NewWindow("校易综测")
 	//制作软件界面
-	MyApp.setWinScreen()
+	MyWin.setWinScreen()
 	//制作界面组件
-	MyApp.setWinWidget()
+	MyWin.setWinWidget()
 	//功能栏
-	MyApp.setMenu()
+	MyWin.setMenu()
 	//窗口展示
-	MyApp.Win.Show()
+	MyWin.Win.Show()
 }
 
 // 制作软件界面
@@ -42,7 +40,7 @@ func (MyWin *Config) setWinScreen() {
 	MyWin.Win.SetIcon(setIcon())
 	MyWin.Win.Resize(fyne.Size{
 		Width:  float32(indexScreenWeight),
-		Height: float32(indexScreenHight),
+		Height: float32(indexScreenHeight),
 	})
 	MyWin.Win.CenterOnScreen()
 	MyWin.Win.SetFixedSize(true)
@@ -57,15 +55,15 @@ func (MyWin *Config) setWinScreen() {
 func (MyWin *Config) setWinWidget() {
 	//按钮制作
 	//单文件类型
-	oneFBtn := widget.NewButtonWithIcon("单文件", nil, func() {
+	oneFBtn := widget.NewButtonWithIcon("File单", nil, func() {
 		setOneFileIndex()
 	})
 	//多文件类型
-	moreFBtn := widget.NewButtonWithIcon("多文件", nil, func() {
+	moreFBtn := widget.NewButtonWithIcon("Files", nil, func() {
 		setMoreFileIndex()
 	})
 	//设置
-	setBtn := widget.NewButtonWithIcon("设置", nil, func() {
+	setBtn := widget.NewButtonWithIcon("Setting", nil, func() {
 		settingIndex()
 	})
 	//添加进组件数组
@@ -79,30 +77,13 @@ func (MyWin *Config) setWinWidget() {
 // SetMenu 功能栏
 func (MyWin *Config) setMenu() {
 	//小菜单
-	aboutMe := fyne.NewMenuItem("联系方式", func() {
-		setAboutDialog(MyWin.Win)
+	aboutMe := fyne.NewMenuItem("info", func() {
+		controller.SetAboutDialog(MyWin.Win)
 	})
 
-	about := fyne.NewMenu("关于", aboutMe)
+	about := fyne.NewMenu("About", aboutMe)
 
 	mainMenu := fyne.NewMainMenu(about)
 
 	MyWin.Win.SetMainMenu(mainMenu)
-}
-
-// 对话框
-func setAboutDialog(window fyne.Window) {
-	title := "本人联系方式"
-	file, err := os.ReadFile("image/about/me.png")
-	if err != nil {
-		log.Println(err)
-	}
-	newIcon := widget.NewIcon(fyne.NewStaticResource("微信", file))
-	newIcon.Resize(fyne.NewSize(300, 300))
-	newIcon.Move(fyne.NewPos(30, 0))
-	con := container.New(nil, newIcon)
-	con.Resize(fyne.NewSize(400, 410))
-	custom := dialog.NewCustom(title, "关闭", con, window)
-	custom.Resize(fyne.NewSize(400, 410))
-	custom.Show()
 }
