@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func SetIcon() *fyne.StaticResource {
+func setIcon() *fyne.StaticResource {
 	//读取图片
 	iconContent, err := ioutil.ReadFile("image\\icon\\all.ico")
 	if err != nil {
